@@ -31,35 +31,9 @@ source = "https://github.com/hephaisto/openswebcad"
 source = "versioningit"
 default-version = "0.0.0+unknown"
 
-[tool.hatch.envs.types]
-extra-dependencies = [
-  "mypy>=1.0.0",
-]
-
 [tool.hatch.envs.hatch-test]
 dependencies = [
     "pytest-asyncio",
 ]
 
 
-[tool.hatch.envs.types.scripts]
-check = "mypy --install-types --non-interactive {args:src/openswebcad tests}"
-
-[tool.coverage.run]
-source_pkgs = ["openswebcad", "tests"]
-branch = true
-parallel = true
-omit = [
-  "src/openswebcad/__about__.py",
-]
-
-[tool.coverage.paths]
-openswebcad = ["src/openswebcad", "*/openswebcad/src/openswebcad"]
-tests = ["tests", "*/openswebcad/tests"]
-
-[tool.coverage.report]
-exclude_lines = [
-  "no cov",
-  "if __name__ == .__main__.:",
-  "if TYPE_CHECKING:",
-]
