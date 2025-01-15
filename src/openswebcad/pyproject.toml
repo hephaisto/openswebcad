@@ -1,6 +1,6 @@
 [build-system]
-requires = ["hatchling", "versioningit"]
-build-backend = "hatchling.build"
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
 
 [project]
 name = "openswebcad"
@@ -15,7 +15,6 @@ authors = [
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Intended Audience :: Developers",
 ]
@@ -26,14 +25,5 @@ dependencies = [
 
 [project.urls]
 source = "https://github.com/hephaisto/openswebcad"
-
-[tool.hatch.version]
-source = "versioningit"
-default-version = "0.0.0+unknown"
-
-[tool.hatch.envs.hatch-test]
-dependencies = [
-    "pytest-asyncio",
-]
 
 
