@@ -35,6 +35,13 @@ default-version = "0.0.0+unknown"
 extra-dependencies = [
   "mypy>=1.0.0",
 ]
+
+[tool.hatch.envs.hatch-test]
+dependencies = [
+    "pytest-asyncio",
+]
+
+
 [tool.hatch.envs.types.scripts]
 check = "mypy --install-types --non-interactive {args:src/openswebcad tests}"
 

@@ -1,11 +1,10 @@
 from typing import Any, Callable
 import base64
-import argparse
 import logging
 import traceback
 from contextlib import contextmanager
 
-from nicegui import ui, app
+from nicegui import ui
 
 import openswebcad
 import openswebcad.generate
@@ -112,7 +111,7 @@ async def with_disabled_button(button: ui.button, f: Callable) -> None:
         await f()
 
 
-def make_generation_page(model, gui_log):
+async def make_generation_page(model, gui_log):
     generator = Generator(model)
     with ui.row(wrap=False):
         with ui.column():
@@ -141,12 +140,12 @@ def make_generation_page(model, gui_log):
         generator.logger.addHandler(handler)
         ui.context.client.on_disconnect(lambda l=generator.logger, h=handler: l.removeHandler(h))
 
-    generator.generate_image()
+    await generator.generate_image()
 
 
 def startup(gui_log: bool, models: list) -> None:
     @ui.page("/")
-    def mainpage():
+    async def mainpage():
         tab_list = []
 
         with ui.tabs().classes("w-full") as tabs:
@@ -155,26 +154,5 @@ def startup(gui_log: bool, models: list) -> None:
         with ui.tab_panels(tabs).classes("w-full"):
             for tab, model in zip(tab_list, models):
                 with ui.tab_panel(tab):
-                    make_generation_page(model, gui_log)
+                    await make_generation_page(model, gui_log)
 
-def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--verbose", "-v", action="count", default=0, help="increase verbosity (can be used multiple times)")
-    parser.add_argument("--native", "-n", action="store_true", help="use native GUI (window) instead of launching a webserver")
-    parser.add_argument("--log", "-l", action="store_true", help="enable log output on GUI. Leaks internal information, but good for debugging")
-    parser.add_argument("modelpath", type=str, help="the path to load plugins from")
-    args = parser.parse_args()
-    logging.basicConfig(level={0: logging.WARNING, 1: logging.INFO, 2: logging.DEBUG}[args.verbose])
-    return args
-
-def main():
-    args = parse_args()
-    Generator.image_size = 1024, 768
-    models = openswebcad.plugin.load_models(args.modelpath)
-    if len(models) == 0:
-        raise RuntimeError("no models found")
-
-    app.on_startup(lambda: startup(gui_log=args.log, models=models))
-    ui.run(native=args.native)
-
-main()
