@@ -1,4 +1,6 @@
 from typing import Literal, Annotated
+import asyncio
+from unittest.mock import MagicMock, patch, ANY
 
 from nicegui import ui
 from nicegui.testing import User
@@ -38,9 +40,73 @@ def init():
     models = default_models
     openswebcad.gui.startup(models=models, gui_log=True)
 
-
-async def test_startup(user: User) -> None:
+async def open_test_page(user: User):
     init()
     await user.open("/")
-    await user.should_see("testname")
+    user.find("testname").click()
+
+async def test_parameter_list(user: User) -> None:
+    await open_test_page(user)
+    await user.should_see("length")
+    await user.should_see("metric")
+    await user.should_see("M4")
+    await user.should_see("M6")
+    await user.should_see("M8")
+    await user.should_see("count")
+
+async def test_float_parameter(user: User) -> None:
+    await open_test_page(user)
+    with patch.object(default_models[0], "generate") as generate:
+        user.find("length").elements.pop().value=20.0
+        await asyncio.sleep(1.0)
+    generate.assert_called_once_with(length=20.0, metric=ANY, count=ANY)
+
+
+async def test_int_parameter(user: User) -> None:
+    await open_test_page(user)
+    with patch.object(default_models[0], "generate") as generate:
+        user.find("count").elements.pop().value=2
+        await asyncio.sleep(1.0)
+    generate.assert_called_once_with(count=2, length=ANY, metric=ANY)
+
+# TODO: test choice
+"""
+async def test_choice_parameter(user: User) -> None:
+    await open_test_page(user)
+    with patch.object(default_models[0], "generate") as generate:
+        user.find("M6").click()
+    generate.assert_called_once_with(metric="M6", length=ANY, count=ANY)
+"""
+
+# TODO: test a) error propagation on change b) error propagation on generation for 1) assertion/arbitrary errors 2) incompatible parameter errors
+
+"""
+def raise_error(*args, **kwargs):
+    raise RuntimeError("errortext")
+
+async def test_error_propagation_on_change(user: User) -> None:
+    await open_test_page(user)
+    with patch.object(default_models[0], "generate", new=raise_error) as generate:
+        user.find("count").elements.pop().value=2
+    #log = user.find(ui.log).elements.pop()
+    await asyncio.sleep(0.3)
+    await user.should_see("model generation failed")
+"""
+
+
+async def test_preview(user: User):
+    await open_test_page(user)
+    image = user.find(ui.image).elements.pop()
+    old = image.source
+    user.find("length").elements.pop().value=20.0
+    await asyncio.sleep(1.0)
+    new = image.source
+    assert new != old
+
+async def test_generation(user: User):
+    await open_test_page(user)
+    user.find("generate STL").click()
+    response = await user.download.next()
+    assert response.status_code == 200
+    assert len(response.content) > 100
 
