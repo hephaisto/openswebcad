@@ -5,7 +5,7 @@ import logging
 import traceback
 from contextlib import contextmanager
 
-from nicegui import ui
+from nicegui import ui, app
 
 import openswebcad
 import openswebcad.generate
@@ -144,18 +144,18 @@ def make_generation_page(model, gui_log):
     generator.generate_image()
 
 
+def startup(gui_log: bool, models: list) -> None:
+    @ui.page("/")
+    def mainpage():
+        tab_list = []
 
-def app(native: bool, gui_log: bool, models: list):
-    tab_list = []
-
-    with ui.tabs().classes("w-full") as tabs:
-        for model in models:
-            tab_list.append(ui.tab(model.name))
-    with ui.tab_panels(tabs).classes("w-full"):
-        for tab, model in zip(tab_list, models):
-            with ui.tab_panel(tab):
-                make_generation_page(model, gui_log)
-    ui.run(native=native)
+        with ui.tabs().classes("w-full") as tabs:
+            for model in models:
+                tab_list.append(ui.tab(model.name))
+        with ui.tab_panels(tabs).classes("w-full"):
+            for tab, model in zip(tab_list, models):
+                with ui.tab_panel(tab):
+                    make_generation_page(model, gui_log)
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -173,6 +173,8 @@ def main():
     models = openswebcad.plugin.load_models(args.modelpath)
     if len(models) == 0:
         raise RuntimeError("no models found")
-    app(native=args.native, gui_log=args.log, models=models)
+
+    app.on_startup(lambda: startup(gui_log=args.log, models=models))
+    ui.run(native=args.native)
 
 main()
