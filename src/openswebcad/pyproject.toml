@@ -19,7 +19,9 @@ classifiers = [
     "Operating System :: OS Independent",
     "Intended Audience :: Developers",
 ]
-dependencies = []
+dependencies = [
+    "pydantic",
+]
 
 [project.urls]
 source = "https://github.com/hephaisto/openswebcad"
