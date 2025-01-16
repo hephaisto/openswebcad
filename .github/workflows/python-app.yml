@@ -32,6 +32,7 @@ jobs:
     - name: install test dependencies
       run: |
         pip install pytest pytest-asyncio
+        apt-get install openscad
     - name: build
       run: |
         pytest src/openswebcad/tests
