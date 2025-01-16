@@ -1,4 +1,5 @@
 import argparse
+import contextlib
 import logging
 
 from nicegui import ui, app
@@ -11,6 +12,7 @@ def parse_args():
     parser.add_argument("--verbose", "-v", action="count", default=0, help="increase verbosity (can be used multiple times)")
     parser.add_argument("--native", "-n", action="store_true", help="use native GUI (window) instead of launching a webserver")
     parser.add_argument("--log", "-l", action="store_true", help="enable log output on GUI. Leaks internal information, but good for debugging")
+    parser.add_argument("--xvfb", "-x", action="store_true", help="use xvfb to wrap openscad (needed on servers without running X-server)")
     parser.add_argument("modelpath", type=str, help="the path to load plugins from")
     args = parser.parse_args()
     logging.basicConfig(level={0: logging.WARNING, 1: logging.INFO, 2: logging.DEBUG}[args.verbose])
@@ -24,6 +26,9 @@ def main():
         raise RuntimeError("no models found")
 
     app.on_startup(lambda: openswebcad.gui.startup(gui_log=args.log, models=models))
-    ui.run(native=args.native)
 
-main()
+    with (openswebcad.generate.xvfb_context if args.xvfb else contextlib.nullcontext()):
+        ui.run(native=args.native, reload=False)
+
+if __name__ in {"__main__", "__mp_main__"}:
+    main()
