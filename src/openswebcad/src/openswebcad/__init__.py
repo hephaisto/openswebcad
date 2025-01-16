@@ -12,7 +12,7 @@ class OpenScadScriptError(GenerationError):
         self.stderr = stderr
 
     def __str__(self):
-        return "model generation failed"
+        return f"model generation failed: {self.stderr}"
 
 class IncompatibleParametersError(GenerationError):
     def __init__(self, parameters: list[str], message: str):
