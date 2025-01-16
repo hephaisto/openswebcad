@@ -26,4 +26,6 @@ dependencies = [
 [project.urls]
 source = "https://github.com/hephaisto/openswebcad"
 
+[tool.pdm.version]
+source = "scm"
 
