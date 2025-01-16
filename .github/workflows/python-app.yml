@@ -32,13 +32,13 @@ jobs:
       run: |
         pip install pytest pytest-asyncio
         sudo apt-get install openscad xvfb
-    - name: build
+    - name: run tests
       run: |
         xvfb-run pytest src/openswebcad/tests
 
     - name: Copy package to for docker
       run: |
-        copy src/openswebcad/dist/*.whl docker/docker/
+        cp src/openswebcad/dist/*.whl docker/docker/
 
     - name: Build and push Docker image
       id: builddocker
