@@ -21,14 +21,14 @@ jobs:
         pip install build
     - name: build
       run: |
-        python -m build
+        python -m build src/openswebcad
     - uses: actions/upload-artifact@v4
       with:
         name: wheel
-        path: dist/*.whl
+        path: src/openswebcad/dist/*.whl
     - name: install package
       run: |
-        pip install dist/*.whl
+        pip install src/openswebcad/dist/*.whl
     - name: install test dependencies
       run: |
         pip install pytest pytest-asyncio
