@@ -7,7 +7,6 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -36,3 +35,17 @@ jobs:
     - name: build
       run: |
         xvfb-run pytest src/openswebcad/tests
+
+    - name: Copy package to for docker
+      run: |
+        copy src/openswebcad/dist/*.whl docker/docker/
+
+    - name: Build and push Docker image
+      id: builddocker
+      uses: docker/build-push-action@v3
+      with:
+        context: docker/docker
+        file: docker/docker/Dockerfile
+        push: false
+        #tags: ${{ steps.meta.outputs.tags }}
+        #labels: ${{ steps.meta.outputs.labels }}
