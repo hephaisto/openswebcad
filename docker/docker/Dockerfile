@@ -13,4 +13,3 @@ RUN mkdir /root/workdir
 WORKDIR /root/workdir
 ENTRYPOINT ["/root/venv/bin/python3", "-m", "openswebcad.run_gui", "-x"]
 CMD ["-v", "/root/models/"]
-COPY screw_openscad.py /root/models/
