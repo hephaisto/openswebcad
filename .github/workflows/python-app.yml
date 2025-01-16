@@ -34,4 +34,4 @@ jobs:
         pip install pytest pytest-asyncio
     - name: build
       run: |
-        pytest tests
+        pytest src/openswebcad/tests
