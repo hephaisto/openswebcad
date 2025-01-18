@@ -45,12 +45,18 @@ jobs:
         username: ${{ vars.DOCKER_USER }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@v5.6.1
+      with:
+        images: hephaisto/openswebcad
+
     - name: Build and push Docker image
       id: builddocker
-      uses: docker/build-push-action@v3
+      uses: docker/build-push-action@v6.12.0
       with:
         context: docker/docker
         file: docker/docker/Dockerfile
         push: false
-        #tags: ${{ steps.meta.outputs.tags }}
-        #labels: ${{ steps.meta.outputs.labels }}
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
