@@ -1,6 +1,12 @@
 # openswebcad
 A web interface to generate/publish parametric 3D models for openscad
 
+## Quickstart
+```
+git clone https://github.com/hephaisto/openswebcad.git
+docker run -p 8080:8080 --mount type=bind,src=/openswebcad/examples,dst=/root/models hephaisto123/openswebcad:latest
+```
+
 ## Intro
 Openswebcad (openscad+web) provides a python package (not via pypi at the moment, unfortunately) and a docker container to quickly publish parametric models.
 The web interface allows numeric and choice inputs, which are given as parameters to a python function defined by the user.
