@@ -50,7 +50,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5.6.1
       with:
-        images: hephaisto/openswebcad
+        images: hephaisto123/openswebcad
 
     - name: Build and push Docker image
       id: builddocker
