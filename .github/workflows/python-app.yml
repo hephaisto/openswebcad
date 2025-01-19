@@ -12,34 +12,42 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
     - name: Set up Python 3.11
       uses: actions/setup-python@v3
       with:
         python-version: "3.11"
+
     - name: install build pre-dependencies
       run: |
         pip install build
+
     - name: build
       run: |
         python -m build src/openswebcad
+
     - uses: actions/upload-artifact@v4
       with:
         name: wheel
         path: src/openswebcad/dist/*.whl
-    - name: install package
+
+    - name: install package locally
       run: |
         pip install src/openswebcad/dist/*.whl
+
     - name: install test dependencies
       run: |
         pip install pytest pytest-asyncio
         sudo apt-get install openscad xvfb
+
     - name: run tests
       run: |
         xvfb-run pytest src/openswebcad/tests
 
-    - name: Copy package to for docker
+    - name: Copy package to to docker context
       run: |
         cp src/openswebcad/dist/*.whl docker/docker/
+
     - name: Login to Docker Hub
       uses: docker/login-action@v3
       with:
