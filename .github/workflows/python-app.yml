@@ -58,7 +58,7 @@ jobs:
       with:
         context: docker/docker
         file: docker/docker/Dockerfile
-        push: ${{ github.ref == 'refs/heads/main' || true }}
-        tags: ${{ steps.meta.outputs.tags }}
+        push: ${{ github.ref == 'refs/heads/main' }}
+        tags: hephaisto123/openswebcad:latest
         labels: ${{ steps.meta.outputs.labels }}
 
